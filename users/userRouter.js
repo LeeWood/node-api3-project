@@ -1,9 +1,9 @@
 const express = require('express');
-
+const db = require('./userDb.js');
 const router = express.Router();
 
 router.post('/', (req, res) => {
-  // do your magic!
+  //do your magic!
 });
 
 router.post('/:id/posts', (req, res) => {
@@ -11,7 +11,17 @@ router.post('/:id/posts', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  // do your magic!
+  db.get(req.query)
+    .then(users => {
+      res.status(200).json(users);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        message: "There was an error retrieving users",
+        err
+      });
+    });
 });
 
 router.get('/:id', (req, res) => {
