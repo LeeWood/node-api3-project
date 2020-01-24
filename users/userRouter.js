@@ -3,9 +3,6 @@ const db = require('./userDb.js');
 const postDb = require('../posts/postDb.js')
 const router = express.Router();
 
-router.use(express.json());
-
-
 router.post('/', validateUser, (req, res) => {
   const userData = req.body;
   db.insert(userData)
@@ -59,7 +56,7 @@ router.get('/:id', validateUserId, (req, res) => {
 });
 
 router.get('/:id/posts', validateUserId, (req, res) => {
-  if(req.user) {
+  
     db.getUserPosts(req.params.id)
       .then(posts => {
         if(posts.length > 0) {
@@ -80,17 +77,71 @@ router.get('/:id/posts', validateUserId, (req, res) => {
           error: err
         });
       })
-  } else {
-    console.log("error")
-  }
+  
 });
 
-router.delete('/:id', (req, res) => {
-  // do your magic!
+router.delete('/:id', validateUserId, (req, res) => {
+
+  const id = req.params.id;
+
+  db.remove(id)
+    .then(user => {
+      res.status(200).json({
+        success: true,
+        message: "user successfully removed",
+        user
+      })
+      .catch(err => {
+        res.status(500).json({
+          success: false,
+          message: "There was an issue removing the user.",
+          error: err
+        });
+      });
+    });
 });
 
-router.put('/:id', (req, res) => {
-  // do your magic!
+// router.put('/:id', validateUserId, validateUser, (req, res) => {
+
+//   const id = req.params.id;
+//   const editedUserData = req.body;
+
+//   db.update(id, editedUserData)
+//     .then(editedUser => {
+//       res.status(200).json({
+//         success: true,
+//         editedUser
+//     }
+//     )}
+//     .catch(err => {
+//       res.status(500).json({
+//         success: false,
+//         message: "There was an issue updating user",
+//         err
+//       });
+//     });
+//   });
+// });
+
+router.put('/:id', validateUserId, validateUser, (req, res) => {
+  const id = req.params.id;
+  const editedUserData = req.body;
+
+  db.update(id, editedUserData)
+    .then(editedUser => {
+      res.status(200).json({
+        success: true,
+        message: "user has been updated",
+        editedUser
+      })
+      .catch(err => {
+        res.status(500).json({
+          success: false,
+          message: "There was an issue updating user",
+          err
+        });
+      });
+    });
 });
 
 //custom middleware
@@ -101,7 +152,7 @@ function validateUserId(req, res, next) {
   db.getById(id)
     .then(user => {
       if(user) {
-        req.user = user; //if user exists, setting return value
+        req.user = user; 
         next();
       } else {
         res.status(404).json({
