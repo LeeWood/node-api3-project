@@ -101,28 +101,6 @@ router.delete('/:id', validateUserId, (req, res) => {
     });
 });
 
-// router.put('/:id', validateUserId, validateUser, (req, res) => {
-
-//   const id = req.params.id;
-//   const editedUserData = req.body;
-
-//   db.update(id, editedUserData)
-//     .then(editedUser => {
-//       res.status(200).json({
-//         success: true,
-//         editedUser
-//     }
-//     )}
-//     .catch(err => {
-//       res.status(500).json({
-//         success: false,
-//         message: "There was an issue updating user",
-//         err
-//       });
-//     });
-//   });
-// });
-
 router.put('/:id', validateUserId, validateUser, (req, res) => {
   const id = req.params.id;
   const editedUserData = req.body;
