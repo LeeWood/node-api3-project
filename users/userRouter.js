@@ -32,7 +32,8 @@ router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
     })
     .catch(err => {
       res.status(500).json({
-        message: "There was an issue creating new post."
+        message: "There was an issue creating new post.",
+        err
       });
     });
 });
